@@ -18,7 +18,7 @@ public class FlagDef_RaidMemberOnly extends FlagDefinition {
 		Flag flag = this.GetFlagInstanceAtLocation(event.getPlayer().getLocation(), null);
 		if (flag == null) return;
 		Player player = event.getPlayer();
-		Claim claim = GriefPrevention.instance.dataStore.getClaimAt(player.getLocation(), false, null);
+		Claim claim = GriefPrevention.instance.dataStore.getClaimAt(player.getLocation(), true, null);
 		if (claim == null) return;
 		if (claim.allowAccess(player) != null) {
 			event.setCancelled(true);

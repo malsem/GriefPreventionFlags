@@ -44,7 +44,7 @@ public class FlagDef_EnterMessage extends PlayerMovementFlagDefinition {
         Player player = e.getPlayer();
         Flag flag = this.GetFlagInstanceAtLocation(player.getLocation(), player);
         if (flag == null) return;
-        Claim claim = GriefPrevention.instance.dataStore.getClaimAt(player.getLocation(), false, null);
+        Claim claim = GriefPrevention.instance.dataStore.getClaimAt(player.getLocation(), true, null);
         String message = flag.parameters;
         message = message.replace("%owner%", claim.getOwnerName()).replace("%name%", player.getName());
         GPFlags.sendMessage(player, TextMode.Info, prefix + message);

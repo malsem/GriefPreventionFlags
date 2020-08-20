@@ -21,7 +21,7 @@ public class FlagDef_NoEnterPlayer extends PlayerMovementFlagDefinition {
         if (from == null || flag == this.GetFlagInstanceAtLocation(from, player)) return true;
 
         PlayerData playerData = GriefPrevention.instance.dataStore.getPlayerData(player.getUniqueId());
-        Claim claim = GriefPrevention.instance.dataStore.getClaimAt(to, false, playerData.lastClaim);
+        Claim claim = GriefPrevention.instance.dataStore.getClaimAt(to, true, playerData.lastClaim);
         if (flag.parameters.toUpperCase().contains(player.getName().toUpperCase()) && claim.allowAccess(player) != null) {
             GPFlags.sendMessage(player, TextMode.Err, Messages.NoEnterPlayerMessage);
             return false;

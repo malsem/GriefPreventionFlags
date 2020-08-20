@@ -445,7 +445,7 @@ public class GPFlags extends JavaPlugin {
                 return false;
             }
             PlayerData playerData = GriefPrevention.instance.dataStore.getPlayerData(player.getUniqueId());
-            Claim claim = GriefPrevention.instance.dataStore.getClaimAt(player.getLocation(), false, playerData.lastClaim);
+            Claim claim = GriefPrevention.instance.dataStore.getClaimAt(player.getLocation(), true, playerData.lastClaim);
             if (claim == null || claim.allowEdit(player) != null) {
                 sendMessage(sender, "&cThis player is not standing in a claim they own");
                 return false;
@@ -554,7 +554,7 @@ public class GPFlags extends JavaPlugin {
         } else if (cmd.getName().equalsIgnoreCase("ListClaimFlags") && player != null) {
             PlayerData playerData = GriefPrevention.instance.dataStore.getPlayerData(player.getUniqueId());
 
-            Claim claim = GriefPrevention.instance.dataStore.getClaimAt(player.getLocation(), false, playerData.lastClaim);
+            Claim claim = GriefPrevention.instance.dataStore.getClaimAt(player.getLocation(), true, playerData.lastClaim);
 
             Collection<Flag> flags;
             boolean flagsFound = false;
@@ -616,7 +616,7 @@ public class GPFlags extends JavaPlugin {
         }
 
         PlayerData playerData = GriefPrevention.instance.dataStore.getPlayerData(player.getUniqueId());
-        Claim claim = GriefPrevention.instance.dataStore.getClaimAt(player.getLocation(), false, playerData.lastClaim);
+        Claim claim = GriefPrevention.instance.dataStore.getClaimAt(player.getLocation(), true, playerData.lastClaim);
 
         if (claim == null) {
             GPFlags.sendMessage(player, TextMode.Err, Messages.StandInAClaim);
@@ -686,12 +686,44 @@ public class GPFlags extends JavaPlugin {
             }
 
             // Permissions for mob type
-            if (flagName.equalsIgnoreCase("NoMobSpawnsType")) {
+            else if (flagName.equalsIgnoreCase("NoMobSpawnsType")) {
                 if (!player.hasPermission("gpflags.nomobspawnstype.*") && !player.hasPermission("gpflags.admin.*")) {
                     for (String type : params[0].split(";")) {
                         if (!player.hasPermission("gpflags.nomobspawnstype." + type)) {
                             GPFlags.sendMessage(player, TextMode.Err, Messages.MobTypePerm, type);
                             return true;
+                        }
+                    }
+                }
+            }
+
+            // Kick player out
+            else if(flagName.equalsIgnoreCase("NoEnter")) {
+                for(Player p : getServer().getOnlinePlayers()){
+                    if(claim.allowAccess(p) == null) continue;
+                    Claim cp = GriefPrevention.instance.dataStore.getClaimAt(p.getLocation(), true, null);
+                    if(cp != null && cp == claim){
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "cmi spawn "+p.getName());
+                        GPFlags.sendMessage(p, TextMode.Err, "領地權限 > 所在領地禁止玩家進入 你被傳送到了重生點");
+                    }
+                }
+            }
+
+            // Kick specific player out
+            else if(flagName.equalsIgnoreCase("NoEnterPlayer")) {
+                StringBuilder result = new StringBuilder();
+                for(String p : params){
+                    result.append(p).append(',');
+                }
+                String[] ids = result.toString().split(",");
+                for(String id : ids){
+                    Player p = getServer().getPlayer(id);
+                    if(claim.allowAccess(p) == null) continue;
+                    if(p != null && getServer().getOnlinePlayers().contains(p)) {
+                        Claim cp = GriefPrevention.instance.dataStore.getClaimAt(p.getLocation(), true, null);
+                        if(cp != null && cp == claim) {
+                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "cmi spawn "+id);
+                            GPFlags.sendMessage(p, TextMode.Err, "領地權限 > 所在領地將你驅逐 你被傳送到了重生點");
                         }
                     }
                 }

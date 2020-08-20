@@ -111,8 +111,8 @@ public class PlayerListener implements Listener {
     private boolean processMovement(Location locTo, Location locFrom, Player player, Cancellable event) {
         if (locTo.getBlockX() == locFrom.getBlockX() && locTo.getBlockY() == locFrom.getBlockY() && locTo.getBlockZ() == locFrom.getBlockZ()) return true;
 
-        Claim claimTo = dataStore.getClaimAt(locTo, false, null);
-        Claim claimFrom = dataStore.getClaimAt(locFrom, false, null);
+        Claim claimTo = dataStore.getClaimAt(locTo, true, null);
+        Claim claimFrom = dataStore.getClaimAt(locFrom, true, null);
         if (claimTo == null && claimFrom == null) return true;
         if (claimTo == claimFrom) return true;
         PlayerClaimBorderEvent playerClaimBorderEvent = new PlayerClaimBorderEvent(player, claimFrom, claimTo, locFrom, locTo);
@@ -148,7 +148,7 @@ public class PlayerListener implements Listener {
 	    if (modifier instanceof Player) {
 	        Player player = ((Player) modifier);
 	        Location loc = player.getLocation();
-	        Claim claimAtLoc = GriefPrevention.instance.dataStore.getClaimAt(loc, false, null);
+	        Claim claimAtLoc = GriefPrevention.instance.dataStore.getClaimAt(loc, true, null);
 	        if (claimAtLoc == null) {
 	            PlayerClaimBorderEvent borderEvent = new PlayerClaimBorderEvent(player, claim, null, claim.getLesserBoundaryCorner(), loc);
 	            Bukkit.getPluginManager().callEvent(borderEvent);

@@ -85,7 +85,7 @@ public class FlagDef_OwnerMemberFly extends PlayerMovementFlagDefinition impleme
         Player player = event.getPlayer();
         Flag flag = this.GetFlagInstanceAtLocation(player.getLocation(), player);
         Material below = player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType();
-        Claim claim = GriefPrevention.instance.dataStore.getClaimAt(player.getLocation(), false, null);
+        Claim claim = GriefPrevention.instance.dataStore.getClaimAt(player.getLocation(), true, null);
 
         if (flag != null && claim.allowAccess(player) == null) {
             player.setAllowFlight(true);
