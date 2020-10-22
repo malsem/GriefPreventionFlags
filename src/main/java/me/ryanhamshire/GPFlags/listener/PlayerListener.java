@@ -160,7 +160,7 @@ public class PlayerListener implements Listener {
     @EventHandler
     private void onRespawnEvent(PlayerRespawnEvent event) {
 	    Location loc = event.getRespawnLocation();
-        Claim claim = GriefPrevention.instance.dataStore.getClaimAt(loc, false, null);
+        Claim claim = GriefPrevention.instance.dataStore.getClaimAt(loc, true, null);
         if (claim != null) {
             Flag flagOwnerFly = GPFlags.getInstance().getFlagManager().getFlag(claim, "OwnerFly");
             Flag flagOwnerMemberFly = GPFlags.getInstance().getFlagManager().getFlag(claim, "OwnerMemberFly");
