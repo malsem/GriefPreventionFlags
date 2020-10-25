@@ -452,6 +452,37 @@ public class CommandHandler {
                 }
             }
 
+            else if(flagName.equalsIgnoreCase("NoEnter")) {
+                for(Player p : getServer().getOnlinePlayers()){
+                    if(claim.allowAccess(p) == null) continue;
+                    Claim cp = GriefPrevention.instance.dataStore.getClaimAt(p.getLocation(), true, null);
+                    if(cp != null && cp == claim){
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "cmi spawn "+p.getName());
+                        GPFlags.sendMessage(p, TextMode.Err, "領地權限 > 所在領地禁止玩家進入 你被傳送到了重生點");
+                    }
+                }
+            }
+
+            // Kick specific player out
+            else if(flagName.equalsIgnoreCase("NoEnterPlayer")) {
+                StringBuilder result = new StringBuilder();
+                for(String p : params){
+                    result.append(p).append(',');
+                }
+                String[] ids = result.toString().split(",");
+                for(String id : ids){
+                    Player p = getServer().getPlayer(id);
+                    if(claim.allowAccess(p) == null) continue;
+                    if(p != null && getServer().getOnlinePlayers().contains(p)) {
+                        Claim cp = GriefPrevention.instance.dataStore.getClaimAt(p.getLocation(), true, null);
+                        if(cp != null && cp == claim) {
+                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "cmi spawn "+id);
+                            GPFlags.sendMessage(p, TextMode.Err, "領地權限 > 所在領地將你驅逐 你被傳送到了重生點");
+                        }
+                    }
+                }
+            }
+
             SetFlagResult result = plugin.getFlagManager().setFlag(claimID.toString(), def, true, params);
             ChatColor color = result.success ? TextMode.Success : TextMode.Err;
             GPFlags.sendMessage(player, color, result.message.messageID, result.message.messageParams);
