@@ -453,7 +453,7 @@ public class CommandHandler {
             }
 
             else if(flagName.equalsIgnoreCase("NoEnter")) {
-                for(Player p : getServer().getOnlinePlayers()){
+                for(Player p : Bukkit.getServer().getOnlinePlayers()){
                     if(claim.allowAccess(p) == null) continue;
                     Claim cp = GriefPrevention.instance.dataStore.getClaimAt(p.getLocation(), true, null);
                     if(cp != null && cp == claim){
@@ -471,9 +471,9 @@ public class CommandHandler {
                 }
                 String[] ids = result.toString().split(",");
                 for(String id : ids){
-                    Player p = getServer().getPlayer(id);
+                    Player p = Bukkit.getServer().getPlayer(id);
                     if(claim.allowAccess(p) == null) continue;
-                    if(p != null && getServer().getOnlinePlayers().contains(p)) {
+                    if(p != null && Bukkit.getServer().getOnlinePlayers().contains(p)) {
                         Claim cp = GriefPrevention.instance.dataStore.getClaimAt(p.getLocation(), true, null);
                         if(cp != null && cp == claim) {
                             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "cmi spawn "+id);
