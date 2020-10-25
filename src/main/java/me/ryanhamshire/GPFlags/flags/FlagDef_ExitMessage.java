@@ -8,13 +8,12 @@ import me.ryanhamshire.GPFlags.Messages;
 import me.ryanhamshire.GPFlags.SetFlagResult;
 import me.ryanhamshire.GPFlags.TextMode;
 import me.ryanhamshire.GriefPrevention.Claim;
-import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public class FlagDef_ExitMessage extends PlayerMovementFlagDefinition {
 
-    private String prefix;
+    private final String prefix;
 
     public FlagDef_ExitMessage(FlagManager manager, GPFlags plugin) {
         super(manager, plugin);
@@ -59,7 +58,7 @@ public class FlagDef_ExitMessage extends PlayerMovementFlagDefinition {
     }
 
     @Override
-    public SetFlagResult ValidateParameters(String parameters) {
+    public SetFlagResult validateParameters(String parameters) {
         if (parameters.isEmpty()) {
             return new SetFlagResult(false, new MessageSpecifier(Messages.MessageRequired));
         }

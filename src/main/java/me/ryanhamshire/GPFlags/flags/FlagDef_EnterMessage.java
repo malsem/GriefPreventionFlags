@@ -16,7 +16,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 public class FlagDef_EnterMessage extends PlayerMovementFlagDefinition {
 
-    private String prefix;
+    private final String prefix;
 
     public FlagDef_EnterMessage(FlagManager manager, GPFlags plugin) {
         super(manager, plugin);
@@ -71,7 +71,7 @@ public class FlagDef_EnterMessage extends PlayerMovementFlagDefinition {
     }
 
     @Override
-    public SetFlagResult ValidateParameters(String parameters) {
+    public SetFlagResult validateParameters(String parameters) {
         if (parameters.isEmpty()) {
             return new SetFlagResult(false, new MessageSpecifier(Messages.MessageRequired));
         }
