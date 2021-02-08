@@ -6,6 +6,7 @@ import me.ryanhamshire.GPFlags.GPFlags;
 import me.ryanhamshire.GPFlags.MessageSpecifier;
 import me.ryanhamshire.GPFlags.Messages;
 import me.ryanhamshire.GPFlags.TextMode;
+import me.ryanhamshire.GPFlags.util.Util;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -25,12 +26,12 @@ public class FlagDef_CommandWhiteList extends CommandListFlagDefinition {
         Player player = event.getPlayer();
         if (player.hasPermission("gpflags.bypass")) return;
 
-        Flag flag = this.GetFlagInstanceAtLocation(player.getLocation(), player);
+        Flag flag = this.getFlagInstanceAtLocation(player.getLocation(), player);
         if (flag == null) return;
 
         if (!this.commandInList(flag.parameters, event.getMessage())) {
             event.setCancelled(true);
-            GPFlags.sendMessage(player, TextMode.Err, Messages.CommandBlockedHere);
+            Util.sendClaimMessage(player, TextMode.Err, Messages.CommandBlockedHere);
         }
     }
 

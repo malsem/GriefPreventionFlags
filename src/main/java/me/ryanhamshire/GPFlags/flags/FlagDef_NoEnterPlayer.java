@@ -7,6 +7,7 @@ import me.ryanhamshire.GPFlags.MessageSpecifier;
 import me.ryanhamshire.GPFlags.Messages;
 import me.ryanhamshire.GPFlags.SetFlagResult;
 import me.ryanhamshire.GPFlags.TextMode;
+import me.ryanhamshire.GPFlags.util.Util;
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import me.ryanhamshire.GriefPrevention.PlayerData;
@@ -20,18 +21,18 @@ public class FlagDef_NoEnterPlayer extends PlayerMovementFlagDefinition {
     }
 
     @Override
-    public boolean allowMovement(Player player, Location lastLocation, Location to) {
+    public boolean allowMovement(Player player, Location lastLocation, Location to, Claim claimFrom, Claim claimTo) {
         if (player.hasPermission("gpflags.bypass")) return true;
 
-        Flag flag = this.GetFlagInstanceAtLocation(to, player);
+        Flag flag = this.getFlagInstanceAtLocation(to, player);
         if (flag == null) return true;
 
-        if (lastLocation == null || flag == this.GetFlagInstanceAtLocation(lastLocation, player)) return true;
+        if (lastLocation == null || flag == this.getFlagInstanceAtLocation(lastLocation, player)) return true;
 
         PlayerData playerData = GriefPrevention.instance.dataStore.getPlayerData(player.getUniqueId());
         Claim claim = GriefPrevention.instance.dataStore.getClaimAt(to, true, playerData.lastClaim);
         if (flag.parameters.toUpperCase().contains(player.getName().toUpperCase()) && claim.allowAccess(player) != null) {
-            GPFlags.sendMessage(player, TextMode.Err, Messages.NoEnterPlayerMessage);
+            Util.sendClaimMessage(player, TextMode.Err, Messages.NoEnterPlayerMessage);
             return false;
         }
         return true;

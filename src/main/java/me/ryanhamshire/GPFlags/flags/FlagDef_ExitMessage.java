@@ -7,6 +7,7 @@ import me.ryanhamshire.GPFlags.MessageSpecifier;
 import me.ryanhamshire.GPFlags.Messages;
 import me.ryanhamshire.GPFlags.SetFlagResult;
 import me.ryanhamshire.GPFlags.TextMode;
+import me.ryanhamshire.GPFlags.util.Util;
 import me.ryanhamshire.GriefPrevention.Claim;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -23,7 +24,7 @@ public class FlagDef_ExitMessage extends PlayerMovementFlagDefinition {
     @Override
     public boolean allowMovement(Player player, Location lastLocation, Location to, Claim claimFrom, Claim claimTo) {
         if (lastLocation == null) return true;
-        Flag flag = this.GetFlagInstanceAtLocation(lastLocation, player);
+        Flag flag = this.getFlagInstanceAtLocation(lastLocation, player);
         if (flag == null) return true;
 
         // get specific ExitMessage flag of origin claim and EnterMessage flag of destination claim
@@ -47,7 +48,7 @@ public class FlagDef_ExitMessage extends PlayerMovementFlagDefinition {
             message = message.replace("%owner%", claimFrom.getOwnerName()).replace("%name%", player.getName());
         }
 
-        GPFlags.sendMessage(player, TextMode.Info, prefix + message);
+        Util.sendClaimMessage(player, TextMode.Info, prefix + message);
 
         return true;
     }

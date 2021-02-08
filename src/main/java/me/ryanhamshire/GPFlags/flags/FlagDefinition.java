@@ -5,6 +5,7 @@ import me.ryanhamshire.GPFlags.FlagManager;
 import me.ryanhamshire.GPFlags.GPFlags;
 import me.ryanhamshire.GPFlags.MessageSpecifier;
 import me.ryanhamshire.GPFlags.SetFlagResult;
+import me.ryanhamshire.GPFlags.WorldSettingsManager;
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import me.ryanhamshire.GriefPrevention.PlayerData;
@@ -25,12 +26,14 @@ import java.util.List;
 public abstract class FlagDefinition implements Listener {
 
     private final FlagManager flagManager;
+    WorldSettingsManager settingsManager;
     private int instances = 0;
     protected GPFlags plugin;
 
     public FlagDefinition(FlagManager manager, GPFlags plugin) {
         this.flagManager = manager;
         this.plugin = plugin;
+        this.settingsManager = plugin.getWorldSettingsManager();
     }
 
     public abstract String getName();
@@ -94,10 +97,11 @@ public abstract class FlagDefinition implements Listener {
                     if (flag != null && !flag.getSet()) return null;
                 }
 
-                if (flag == null) {
-                    flag = this.flagManager.getFlag(FlagManager.DEFAULT_FLAG_ID.toString(), this);
-                    if (flag != null && !flag.getSet()) return null;
-                }
+                // This should no longer be needed since the getFlag method now checks for defaults
+//                if (flag == null) {
+//                    flag = this.flagManager.getFlag(FlagManager.DEFAULT_FLAG_ID, this);
+//                    if (flag != null && !flag.getSet()) return null;
+//                }
             }
         }
 
@@ -122,6 +126,10 @@ public abstract class FlagDefinition implements Listener {
 
     public void firstTimeSetup() {
         Bukkit.getServer().getPluginManager().registerEvents(this, this.plugin);
+    }
+
+    public void updateSettings(WorldSettingsManager settingsManager) {
+        this.settingsManager = settingsManager;
     }
 
     /**

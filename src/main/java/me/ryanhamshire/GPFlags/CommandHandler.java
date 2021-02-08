@@ -3,12 +3,15 @@ package me.ryanhamshire.GPFlags;
 import com.google.common.collect.ImmutableList;
 import me.ryanhamshire.GPFlags.flags.FlagDef_ChangeBiome;
 import me.ryanhamshire.GPFlags.flags.FlagDefinition;
+import me.ryanhamshire.GPFlags.util.Util;
 import me.ryanhamshire.GriefPrevention.Claim;
+import me.ryanhamshire.GriefPrevention.ClaimPermission;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import me.ryanhamshire.GriefPrevention.PlayerData;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -66,7 +69,7 @@ public class CommandHandler {
         }
         if (cmd.getName().equalsIgnoreCase("GPFReload")) {
             plugin.reloadConfig();
-            GPFlags.sendMessage(player, TextMode.Success, Messages.ReloadComplete);
+            Util.sendMessage(player, TextMode.Success, Messages.ReloadComplete);
             return true;
         } else if (cmd.getName().equalsIgnoreCase("SetDefaultClaimFlag")) {
             if (args.length < 1) return false;
@@ -75,17 +78,17 @@ public class CommandHandler {
 
             FlagDefinition def = plugin.getFlagManager().getFlagDefinitionByName(flagName);
             if (def == null) {
-                GPFlags.sendMessage(player, TextMode.Err, getFlagDefsMessage(player));
+                Util.sendMessage(player, TextMode.Err, getFlagDefsMessage(player));
                 return true;
             }
 
             if (!playerHasPermissionForFlag(def, player)) {
-                GPFlags.sendMessage(player, TextMode.Err, Messages.NoFlagPermission);
+                Util.sendMessage(player, TextMode.Err, Messages.NoFlagPermission);
                 return true;
             }
 
             if (!def.getFlagType().contains(FlagDefinition.FlagType.CLAIM)) {
-                GPFlags.sendMessage(player, TextMode.Err, Messages.NoFlagInClaim);
+                Util.sendMessage(player, TextMode.Err, Messages.NoFlagInClaim);
                 return true;
             }
 
@@ -97,10 +100,10 @@ public class CommandHandler {
             SetFlagResult result = plugin.getFlagManager().setFlag(FlagManager.DEFAULT_FLAG_ID, def, true, params);
             ChatColor color = result.success ? TextMode.Success : TextMode.Err;
             if (result.success) {
-                GPFlags.sendMessage(player, color, Messages.DefaultFlagSet);
+                Util.sendMessage(player, color, Messages.DefaultFlagSet);
                 plugin.getFlagManager().save();
             } else {
-                GPFlags.sendMessage(player, color, result.message.messageID, result.message.messageParams);
+                Util.sendMessage(player, color, result.message.messageID, result.message.messageParams);
             }
 
             return true;
@@ -110,22 +113,22 @@ public class CommandHandler {
             String flagName = args[0];
             FlagDefinition def = plugin.getFlagManager().getFlagDefinitionByName(flagName);
             if (def == null) {
-                GPFlags.sendMessage(player, TextMode.Err, getFlagDefsMessage(player));
+                Util.sendMessage(player, TextMode.Err, getFlagDefsMessage(player));
                 return true;
             }
 
             if (!playerHasPermissionForFlag(def, player)) {
-                GPFlags.sendMessage(player, TextMode.Err, Messages.NoFlagPermission);
+                Util.sendMessage(player, TextMode.Err, Messages.NoFlagPermission);
                 return true;
             }
 
             SetFlagResult result = plugin.getFlagManager().unSetFlag(FlagManager.DEFAULT_FLAG_ID, def);
             ChatColor color = result.success ? TextMode.Success : TextMode.Err;
             if (result.success) {
-                GPFlags.sendMessage(player, color, Messages.DefaultFlagUnSet);
+                Util.sendMessage(player, color, Messages.DefaultFlagUnSet);
                 plugin.getFlagManager().save();
             } else {
-                GPFlags.sendMessage(player, color, result.message.messageID, result.message.messageParams);
+                Util.sendMessage(player, color, result.message.messageID, result.message.messageParams);
             }
 
             return true;
@@ -135,17 +138,17 @@ public class CommandHandler {
             String flagName = args[0];
             FlagDefinition def = plugin.getFlagManager().getFlagDefinitionByName(flagName);
             if (def == null) {
-                GPFlags.sendMessage(player, TextMode.Err, getFlagDefsMessage(player));
+                Util.sendMessage(player, TextMode.Err, getFlagDefsMessage(player));
                 return true;
             }
 
             if (!playerHasPermissionForFlag(def, player)) {
-                GPFlags.sendMessage(player, TextMode.Err, Messages.NoFlagPermission);
+                Util.sendMessage(player, TextMode.Err, Messages.NoFlagPermission);
                 return true;
             }
 
             if (!def.getFlagType().contains(FlagDefinition.FlagType.SERVER)) {
-                GPFlags.sendMessage(player, TextMode.Err, Messages.NoFlagInServer);
+                Util.sendMessage(player, TextMode.Err, Messages.NoFlagInServer);
                 return true;
             }
 
@@ -157,10 +160,10 @@ public class CommandHandler {
             SetFlagResult result = plugin.getFlagManager().setFlag("everywhere", def, true, params);
             ChatColor color = result.success ? TextMode.Success : TextMode.Err;
             if (result.success) {
-                GPFlags.sendMessage(player, color, Messages.ServerFlagSet);
+                Util.sendMessage(player, color, Messages.ServerFlagSet);
                 plugin.getFlagManager().save();
             } else {
-                GPFlags.sendMessage(player, color, result.message.messageID, result.message.messageParams);
+                Util.sendMessage(player, color, result.message.messageID, result.message.messageParams);
             }
 
             return true;
@@ -170,23 +173,64 @@ public class CommandHandler {
             String flagName = args[0];
             FlagDefinition def = plugin.getFlagManager().getFlagDefinitionByName(flagName);
             if (def == null) {
-                GPFlags.sendMessage(player, TextMode.Err, getFlagDefsMessage(player));
+                Util.sendMessage(player, TextMode.Err, getFlagDefsMessage(player));
                 return true;
             }
 
             if (!playerHasPermissionForFlag(def, player)) {
-                GPFlags.sendMessage(player, TextMode.Err, Messages.NoFlagPermission);
+                Util.sendMessage(player, TextMode.Err, Messages.NoFlagPermission);
                 return true;
             }
 
             SetFlagResult result = plugin.getFlagManager().unSetFlag("everywhere", def);
             ChatColor color = result.success ? TextMode.Success : TextMode.Err;
             if (result.success) {
-                GPFlags.sendMessage(player, color, Messages.ServerFlagUnSet);
+                Util.sendMessage(player, color, Messages.ServerFlagUnSet);
                 plugin.getFlagManager().save();
             } else {
-                GPFlags.sendMessage(player, color, result.message.messageID, result.message.messageParams);
+                Util.sendMessage(player, color, result.message.messageID, result.message.messageParams);
             }
+
+            return true;
+        }
+
+        if (cmd.getName().equalsIgnoreCase("UnsetClaimFlagPlayer")) {
+            if (args.length < 2) return false;
+            player = Bukkit.getPlayer(args[0]);
+            if (player == null) {
+                Util.sendMessage(sender, "&c" + args[0] + " &7is not online");
+                return false;
+            }
+            PlayerData playerData = GriefPrevention.instance.dataStore.getPlayerData(player.getUniqueId());
+            Claim claim = GriefPrevention.instance.dataStore.getClaimAt(player.getLocation(), false, playerData.lastClaim);
+            if (claim == null || claim.allowEdit(player) != null) {
+                Util.sendMessage(sender, "&cThis player is not standing in a claim they own");
+                return false;
+            }
+
+            String flagName = args[1];
+            FlagDefinition def = plugin.getFlagManager().getFlagDefinitionByName(flagName);
+            if (def == null) {
+                Util.sendMessage(sender, String.format("&c%s&7 is not a valid flag", flagName));
+                return false;
+            }
+            if (!def.getFlagType().contains(FlagDefinition.FlagType.CLAIM)) {
+                Util.sendMessage(player, TextMode.Err, Messages.NoFlagInClaim);
+                return true;
+            }
+
+            SetFlagResult result = plugin.getFlagManager().unSetFlag(claim, def);
+            ChatColor color = result.success ? TextMode.Success : TextMode.Err;
+            Util.sendMessage(sender, color, result.message.messageID, result.message.messageParams);
+            String message;
+            if (result.success) {
+                plugin.getFlagManager().save();
+                message = String.format("&7Flag &b%s &7successfully unset in &b%s&7's claim.", def.getName(), player.getName());
+
+            } else {
+                message = String.format("&cFlag &b%s &cfailed to unset in &b%s&c's claim.", def.getName(), player.getName());
+            }
+            Util.sendMessage(sender, message);
 
             return true;
         }
@@ -196,24 +240,24 @@ public class CommandHandler {
             if (args.length < 2) return false;
             player = Bukkit.getPlayer(args[0]);
             if (player == null) {
-                GPFlags.sendMessage(sender, "&c" + args[0] + " &7is not online");
+                Util.sendMessage(sender, "&c" + args[0] + " &7is not online");
                 return false;
             }
             PlayerData playerData = GriefPrevention.instance.dataStore.getPlayerData(player.getUniqueId());
             Claim claim = GriefPrevention.instance.dataStore.getClaimAt(player.getLocation(), false, playerData.lastClaim);
             if (claim == null || claim.allowEdit(player) != null) {
-                GPFlags.sendMessage(sender, "&cThis player is not standing in a claim they own");
+                Util.sendMessage(sender, "&cThis player is not standing in a claim they own");
                 return false;
             }
 
             String flagName = args[1];
             FlagDefinition def = plugin.getFlagManager().getFlagDefinitionByName(flagName);
             if (def == null) {
-                GPFlags.sendMessage(sender, "&c" + args[1] + "&7 is not a valid flag");
+                Util.sendMessage(sender, "&c" + args[1] + "&7 is not a valid flag");
                 return false;
             }
             if (!def.getFlagType().contains(FlagDefinition.FlagType.CLAIM)) {
-                GPFlags.sendMessage(player, TextMode.Err, Messages.NoFlagInClaim);
+                Util.sendMessage(player, TextMode.Err, Messages.NoFlagInClaim);
                 return true;
             }
 
@@ -232,10 +276,10 @@ public class CommandHandler {
 
             SetFlagResult result = plugin.getFlagManager().setFlag(claim.getID().toString(), def, true, params);
             ChatColor color = result.success ? TextMode.Success : TextMode.Err;
-            GPFlags.sendMessage(sender, color, result.message.messageID, result.message.messageParams);
+            Util.sendMessage(sender, color, result.message.messageID, result.message.messageParams);
             if (result.success) {
                 plugin.getFlagManager().save();
-                GPFlags.sendMessage(sender, "&7Flag &b" + def.getName() + " &7successfully set in &b" + player.getName() + "&7's claim.");
+                Util.sendMessage(sender, "&7Flag &b" + def.getName() + " &7successfully set in &b" + player.getName() + "&7's claim.");
                 return true;
             }
 
@@ -243,7 +287,7 @@ public class CommandHandler {
         }
 
         if (player == null) {
-            GPFlags.addLogEntry("You must be logged into the game to use that command.");
+            Util.log("You must be logged into the game to use that command.");
         }
 
         if (cmd.getName().equalsIgnoreCase("SetWorldFlag") && player != null) {
@@ -252,17 +296,17 @@ public class CommandHandler {
             String flagName = args[0];
             FlagDefinition def = plugin.getFlagManager().getFlagDefinitionByName(flagName);
             if (def == null) {
-                GPFlags.sendMessage(player, TextMode.Err, getFlagDefsMessage(player));
+                Util.sendMessage(player, TextMode.Err, getFlagDefsMessage(player));
                 return true;
             }
 
             if (!playerHasPermissionForFlag(def, player)) {
-                GPFlags.sendMessage(player, TextMode.Err, Messages.NoFlagPermission);
+                Util.sendMessage(player, TextMode.Err, Messages.NoFlagPermission);
                 return true;
             }
 
             if (!def.getFlagType().contains(FlagDefinition.FlagType.WORLD)) {
-                GPFlags.sendMessage(player, TextMode.Err, Messages.NoFlagInWorld);
+                Util.sendMessage(player, TextMode.Err, Messages.NoFlagInWorld);
                 return true;
             }
 
@@ -274,10 +318,10 @@ public class CommandHandler {
             SetFlagResult result = plugin.getFlagManager().setFlag(player.getWorld().getName(), def, true, params);
             ChatColor color = result.success ? TextMode.Success : TextMode.Err;
             if (result.success) {
-                GPFlags.sendMessage(player, color, Messages.WorldFlagSet);
+                Util.sendMessage(player, color, Messages.WorldFlagSet);
                 plugin.getFlagManager().save();
             } else {
-                GPFlags.sendMessage(player, color, result.message.messageID, result.message.messageParams);
+                Util.sendMessage(player, color, result.message.messageID, result.message.messageParams);
             }
 
             return true;
@@ -287,22 +331,22 @@ public class CommandHandler {
             String flagName = args[0];
             FlagDefinition def = plugin.getFlagManager().getFlagDefinitionByName(flagName);
             if (def == null) {
-                GPFlags.sendMessage(player, TextMode.Err, getFlagDefsMessage(player));
+                Util.sendMessage(player, TextMode.Err, getFlagDefsMessage(player));
                 return true;
             }
 
             if (!playerHasPermissionForFlag(def, player)) {
-                GPFlags.sendMessage(player, TextMode.Err, Messages.NoFlagPermission);
+                Util.sendMessage(player, TextMode.Err, Messages.NoFlagPermission);
                 return true;
             }
 
             SetFlagResult result = plugin.getFlagManager().unSetFlag(player.getWorld().getName(), def);
             ChatColor color = result.success ? TextMode.Success : TextMode.Err;
             if (result.success) {
-                GPFlags.sendMessage(player, color, Messages.WorldFlagUnSet);
+                Util.sendMessage(player, color, Messages.WorldFlagUnSet);
                 plugin.getFlagManager().save();
             } else {
-                GPFlags.sendMessage(player, color, result.message.messageID, result.message.messageParams);
+                Util.sendMessage(player, color, result.message.messageID, result.message.messageParams);
             }
 
             return true;
@@ -353,18 +397,18 @@ public class CommandHandler {
             }
 
             if (builder1.length() > 0)
-                GPFlags.sendMessage(player, TextMode.Info, Messages.FlagsClaim, builder1.toString());
+                Util.sendMessage(player, TextMode.Info, Messages.FlagsClaim, builder1.toString());
             if (builder2.length() > 0)
-                GPFlags.sendMessage(player, TextMode.Info, Messages.FlagsParent, builder2.toString());
+                Util.sendMessage(player, TextMode.Info, Messages.FlagsParent, builder2.toString());
             if (builder3.length() > 0)
-                GPFlags.sendMessage(player, TextMode.Info, Messages.FlagsDefault, builder3.toString());
+                Util.sendMessage(player, TextMode.Info, Messages.FlagsDefault, builder3.toString());
             if (builder4.length() > 0)
-                GPFlags.sendMessage(player, TextMode.Info, Messages.FlagsWorld, builder4.toString());
+                Util.sendMessage(player, TextMode.Info, Messages.FlagsWorld, builder4.toString());
             if (builder5.length() > 0)
-                GPFlags.sendMessage(player, TextMode.Info, Messages.FlagsServer, builder5.toString());
+                Util.sendMessage(player, TextMode.Info, Messages.FlagsServer, builder5.toString());
 
             if (!flagsFound) {
-                GPFlags.sendMessage(player, TextMode.Info, Messages.NoFlagsHere);
+                Util.sendMessage(player, TextMode.Info, Messages.NoFlagsHere);
             }
 
             return true;
@@ -374,13 +418,13 @@ public class CommandHandler {
         Claim claim = GriefPrevention.instance.dataStore.getClaimAt(player.getLocation(), false, playerData.lastClaim);
 
         if (claim == null) {
-            GPFlags.sendMessage(player, TextMode.Err, Messages.StandInAClaim);
+            Util.sendMessage(player, TextMode.Err, Messages.StandInAClaim);
             return true;
         }
 
         Long claimID = claim.getID();
         if (claimID == null || claimID == -1) {
-            GPFlags.sendMessage(player, TextMode.Err, Messages.UpdateGPForSubdivisionFlags);
+            Util.sendMessage(player, TextMode.Err, Messages.UpdateGPForSubdivisionFlags);
             return true;
         }
 
@@ -390,22 +434,22 @@ public class CommandHandler {
             String flagName = args[0];
             FlagDefinition def = plugin.getFlagManager().getFlagDefinitionByName(flagName);
             if (def == null) {
-                GPFlags.sendMessage(player, TextMode.Err, getFlagDefsMessage(player));
+                Util.sendMessage(player, TextMode.Err, getFlagDefsMessage(player));
                 return true;
             }
 
             if (!playerHasPermissionForFlag(def, player)) {
-                GPFlags.sendMessage(player, TextMode.Err, Messages.NoFlagPermission);
+                Util.sendMessage(player, TextMode.Err, Messages.NoFlagPermission);
                 return true;
             }
 
             if (!def.getFlagType().contains(FlagDefinition.FlagType.CLAIM)) {
-                GPFlags.sendMessage(player, TextMode.Err, Messages.NoFlagInClaim);
+                Util.sendMessage(player, TextMode.Err, Messages.NoFlagInClaim);
                 return true;
             }
 
             if (claim.allowEdit(player) != null) {
-                GPFlags.sendMessage(player, TextMode.Err, Messages.NotYourClaim);
+                Util.sendMessage(player, TextMode.Err, Messages.NotYourClaim);
                 return true;
             }
 
@@ -420,13 +464,13 @@ public class CommandHandler {
             for (Flag flag : flags) {
                 if (args[0].equalsIgnoreCase("OwnerFly")) {
                     if (flag.flagDefinition.getName().equalsIgnoreCase("OwnerMemberFly")) {
-                        GPFlags.sendMessage(player, TextMode.Warn, Messages.NoOwnerFlag);
+                        Util.sendMessage(player, TextMode.Warn, Messages.NoOwnerFlag);
                         return true;
                     }
                 }
                 if (args[0].equalsIgnoreCase("OwnerMemberFly")) {
                     if (flag.flagDefinition.getName().equalsIgnoreCase("OwnerFly")) {
-                        GPFlags.sendMessage(player, TextMode.Warn, Messages.NoOwnerFlag);
+                        Util.sendMessage(player, TextMode.Warn, Messages.NoOwnerFlag);
                         return true;
                     }
                 }
@@ -443,9 +487,10 @@ public class CommandHandler {
             // Permissions for mob type
             if (flagName.equalsIgnoreCase("NoMobSpawnsType")) {
                 if (!player.hasPermission("gpflags.nomobspawnstype.*") && !player.hasPermission("gpflags.admin.*")) {
+                    if (params == null) return false;
                     for (String type : params[0].split(";")) {
                         if (!player.hasPermission("gpflags.nomobspawnstype." + type)) {
-                            GPFlags.sendMessage(player, TextMode.Err, Messages.MobTypePerm, type);
+                            Util.sendMessage(player, TextMode.Err, Messages.MobTypePerm, type);
                             return true;
                         }
                     }
@@ -485,8 +530,45 @@ public class CommandHandler {
 
             SetFlagResult result = plugin.getFlagManager().setFlag(claimID.toString(), def, true, params);
             ChatColor color = result.success ? TextMode.Success : TextMode.Err;
-            GPFlags.sendMessage(player, color, result.message.messageID, result.message.messageParams);
+            Util.sendMessage(player, color, result.message.messageID, result.message.messageParams);
             if (result.success) plugin.getFlagManager().save();
+
+            if (args[0].equalsIgnoreCase("NoEnter") && args.length >= 2) {
+                World world = player.getWorld();
+                for (Player p: world.getPlayers()) {
+                    if (claim.contains(p.getLocation(), true, false)) {
+                        if (claim.getPermission(p.getName()) == null && !claim.getOwnerName().equals(p.getName())) {
+                            GriefPrevention.instance.ejectPlayer(p);
+                        }
+                    }
+                }
+            }
+            if (args[0].equalsIgnoreCase("NoEnterPlayer") && args.length >= 2) {
+                for (int i = 1; i < args.length; i++) {
+                    Player target = Bukkit.getPlayer(args[i]);
+                    if (target != null && target.getName().equalsIgnoreCase(args[i])) {
+                        if (claim.contains(target.getLocation(), true, false)) {
+                            if (claim.getPermission(args[i]) == null) {
+                                GriefPrevention.instance.ejectPlayer(target);
+                            }
+                        }
+                    }
+                }
+            }
+            if (args[0].equalsIgnoreCase("OwnerFly")) {
+                player.setAllowFlight(true);
+            }
+            if (args[0].equalsIgnoreCase("OwnerMemberFly")) {
+                player.setAllowFlight(true);
+                World world = player.getWorld();
+                for (Player p: world.getPlayers()) {
+                    if (claim.contains(p.getLocation(), true, false)) {
+                        if (claim.getPermission(p.getUniqueId().toString()) == ClaimPermission.Access) {
+                            p.setAllowFlight(true);
+                        }
+                    }
+                }
+            }
 
             return true;
         } else if (cmd.getName().equalsIgnoreCase("UnSetClaimFlag") && player != null) {
@@ -496,17 +578,17 @@ public class CommandHandler {
 
             FlagDefinition def = plugin.getFlagManager().getFlagDefinitionByName(flagName);
             if (def == null) {
-                GPFlags.sendMessage(player, TextMode.Err, getFlagDefsMessage(player));
+                Util.sendMessage(player, TextMode.Err, getFlagDefsMessage(player));
                 return true;
             }
 
             if (!playerHasPermissionForFlag(def, player)) {
-                GPFlags.sendMessage(player, TextMode.Err, Messages.NoFlagPermission);
+                Util.sendMessage(player, TextMode.Err, Messages.NoFlagPermission);
                 return true;
             }
 
             if (claim.allowEdit(player) != null) {
-                GPFlags.sendMessage(player, TextMode.Err, Messages.NotYourClaim);
+                Util.sendMessage(player, TextMode.Err, Messages.NotYourClaim);
                 return true;
             }
 
@@ -518,7 +600,7 @@ public class CommandHandler {
 
             SetFlagResult result = plugin.getFlagManager().unSetFlag(claimID.toString(), def);
             ChatColor color = result.success ? TextMode.Success : TextMode.Err;
-            GPFlags.sendMessage(player, color, result.message.messageID, result.message.messageParams);
+            Util.sendMessage(player, color, result.message.messageID, result.message.messageParams);
             if (result.success) plugin.getFlagManager().save();
 
             return true;

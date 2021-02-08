@@ -7,6 +7,7 @@ import me.ryanhamshire.GPFlags.GPFlags;
 import me.ryanhamshire.GPFlags.MessageSpecifier;
 import me.ryanhamshire.GPFlags.Messages;
 import me.ryanhamshire.GPFlags.TextMode;
+import me.ryanhamshire.GPFlags.util.Util;
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import org.bukkit.entity.Player;
@@ -30,7 +31,7 @@ public class FlagDef_NoEnderPearl extends FlagDefinition {
 
         Player player = event.getPlayer();
 
-        Flag flag = this.GetFlagInstanceAtLocation(event.getFrom(), event.getPlayer());
+        Flag flag = this.getFlagInstanceAtLocation(event.getFrom(), event.getPlayer());
         if (flag != null) {
             event.setCancelled(true);
             Claim claim = GriefPrevention.instance.dataStore.getClaimAt(event.getFrom(), true, null);
@@ -38,15 +39,15 @@ public class FlagDef_NoEnderPearl extends FlagDefinition {
                 String owner = claim.getOwnerName();
 
                 String msg = new FlagsDataStore().getMessage(Messages.NoEnderPearlInClaim);
-                GPFlags.sendMessage(player, TextMode.Warn, msg.replace("{o}", owner).replace("{p}", player.getName()));
+                Util.sendClaimMessage(player, TextMode.Warn, msg.replace("{o}", owner).replace("{p}", player.getName()));
                 return;
             }
             String msg = new FlagsDataStore().getMessage(Messages.NoEnderPearlInWorld);
-            GPFlags.sendMessage(player, TextMode.Warn, msg.replace("{p}", player.getName()));
+            Util.sendClaimMessage(player, TextMode.Warn, msg.replace("{p}", player.getName()));
             return;
         }
 
-        flag = this.GetFlagInstanceAtLocation(event.getTo(), event.getPlayer());
+        flag = this.getFlagInstanceAtLocation(event.getTo(), event.getPlayer());
         if (flag != null) {
             event.setCancelled(true);
             Claim claim = GriefPrevention.instance.dataStore.getClaimAt(event.getTo(), true, null);
@@ -54,7 +55,7 @@ public class FlagDef_NoEnderPearl extends FlagDefinition {
                 String owner = claim.getOwnerName();
 
                 String msg = new FlagsDataStore().getMessage(Messages.NoEnderPearlToClaim);
-                GPFlags.sendMessage(player, TextMode.Warn, msg.replace("{o}", owner).replace("{p}", player.getName()));
+                Util.sendClaimMessage(player, TextMode.Warn, msg.replace("{o}", owner).replace("{p}", player.getName()));
             }
         }
 

@@ -7,8 +7,8 @@ import me.ryanhamshire.GPFlags.MessageSpecifier;
 import me.ryanhamshire.GPFlags.Messages;
 import me.ryanhamshire.GPFlags.TextMode;
 import me.ryanhamshire.GPFlags.WorldSettings;
-import me.ryanhamshire.GPFlags.WorldSettingsManager;
 import me.ryanhamshire.GPFlags.util.Util;
+import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.EntityEventHandler;
 import me.ryanhamshire.GriefPrevention.events.PreventPvPEvent;
 import org.bukkit.Location;
@@ -47,33 +47,30 @@ import java.util.List;
 
 public class FlagDef_AllowPvP extends PlayerMovementFlagDefinition {
 
-    private WorldSettingsManager settingsManager;
-
-    public FlagDef_AllowPvP(FlagManager manager, GPFlags plugin, WorldSettingsManager settingsManager) {
+    public FlagDef_AllowPvP(FlagManager manager, GPFlags plugin) {
         super(manager, plugin);
-        this.settingsManager = settingsManager;
     }
 
     @Override
-    public boolean allowMovement(Player player, Location lastLocation, Location to) {
+    public boolean allowMovement(Player player, Location lastLocation, Location to, Claim claimFrom, Claim claimTo) {
         if (lastLocation == null) return true;
-        Flag flag = this.GetFlagInstanceAtLocation(to, player);
+        Flag flag = this.getFlagInstanceAtLocation(to, player);
         WorldSettings settings = this.settingsManager.get(player.getWorld());
         if (flag == null) {
-            if (this.GetFlagInstanceAtLocation(lastLocation, player) != null) {
+            if (this.getFlagInstanceAtLocation(lastLocation, player) != null) {
                 if (!settings.pvpRequiresClaimFlag) return true;
                 if (!settings.pvpExitClaimMessageEnabled) return true;
-                GPFlags.sendMessage(player, TextMode.Success, settings.pvpExitClaimMessage);
+                Util.sendClaimMessage(player, TextMode.Success, settings.pvpExitClaimMessage);
             }
             return true;
         }
-        if (flag == this.GetFlagInstanceAtLocation(lastLocation, player)) return true;
-        if (this.GetFlagInstanceAtLocation(lastLocation, player) != null) return true;
+        if (flag == this.getFlagInstanceAtLocation(lastLocation, player)) return true;
+        if (this.getFlagInstanceAtLocation(lastLocation, player) != null) return true;
 
         if (!settings.pvpRequiresClaimFlag) return true;
         if (!settings.pvpEnterClaimMessageEnabled) return true;
 
-        GPFlags.sendMessage(player, TextMode.Warn, settings.pvpEnterClaimMessage);
+        Util.sendClaimMessage(player, TextMode.Warn, settings.pvpEnterClaimMessage);
         return true;
     }
 
@@ -88,18 +85,18 @@ public class FlagDef_AllowPvP extends PlayerMovementFlagDefinition {
             return;
         }
         hasJoined = true;
-        Flag flag = this.GetFlagInstanceAtLocation(player.getLocation(), null);
+        Flag flag = this.getFlagInstanceAtLocation(player.getLocation(), null);
         if (flag == null) return;
         WorldSettings settings = this.settingsManager.get(player.getWorld());
         if (!settings.pvpRequiresClaimFlag) return;
         if (!settings.pvpEnterClaimMessageEnabled) return;
-        GPFlags.sendMessage(player, TextMode.Warn, settings.pvpEnterClaimMessage);
+        Util.sendClaimMessage(player, TextMode.Warn, settings.pvpEnterClaimMessage);
 
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPreventPvP(PreventPvPEvent event) {
-        Flag flag = this.GetFlagInstanceAtLocation(event.getClaim().getLesserBoundaryCorner(), null);
+        Flag flag = this.getFlagInstanceAtLocation(event.getClaim().getLesserBoundaryCorner(), null);
         if (flag == null) return;
         event.setCancelled(true);
     }
@@ -163,12 +160,12 @@ public class FlagDef_AllowPvP extends PlayerMovementFlagDefinition {
         }
 
         // if in a flagged-for-pvp area, allow
-        Flag flag = this.GetFlagInstanceAtLocation(thrower.getLocation(), thrower);
+        Flag flag = this.getFlagInstanceAtLocation(thrower.getLocation(), thrower);
         if (flag != null) return;
 
         // otherwise disallow
         ((Cancellable) event).setCancelled(true);
-        GPFlags.sendMessage(thrower, TextMode.Err, settings.pvpDeniedMessage);
+        Util.sendClaimMessage(thrower, TextMode.Err, settings.pvpDeniedMessage);
     }
 
     //when an entity is set on fire
@@ -209,8 +206,8 @@ public class FlagDef_AllowPvP extends PlayerMovementFlagDefinition {
         if (damager.getType() != EntityType.PLAYER) return;
 
         //if in a flagged-for-pvp area, allow
-        Flag flag = this.GetFlagInstanceAtLocation(damager.getLocation(), null);
-        Flag flag2 = this.GetFlagInstanceAtLocation(event.getEntity().getLocation(), null);
+        Flag flag = this.getFlagInstanceAtLocation(damager.getLocation(), null);
+        Flag flag2 = this.getFlagInstanceAtLocation(event.getEntity().getLocation(), null);
         if (flag != null && flag2 != null) return;
 
         //if damaged entity is not a player, ignore, this is a PVP flag
@@ -239,7 +236,7 @@ public class FlagDef_AllowPvP extends PlayerMovementFlagDefinition {
             }
         }
         if (sendErrorMessagesToPlayers && damager instanceof Player)
-            GPFlags.sendMessage(damager, TextMode.Err, settings.pvpDeniedMessage);
+            Util.sendClaimMessage(damager, TextMode.Err, settings.pvpDeniedMessage);
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
@@ -286,10 +283,6 @@ public class FlagDef_AllowPvP extends PlayerMovementFlagDefinition {
                 return true;
         }
         return false;
-    }
-
-    public void updateSettings(WorldSettingsManager settingsManager) {
-        this.settingsManager = settingsManager;
     }
 
     @Override
