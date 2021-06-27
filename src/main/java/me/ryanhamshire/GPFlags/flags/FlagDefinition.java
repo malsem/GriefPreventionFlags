@@ -118,6 +118,27 @@ public abstract class FlagDefinition implements Listener {
         return flag;
     }
 
+    public Flag getClaimFlagFromClaim(Claim claim){
+        Flag flag = null;
+        if (claim != null) {
+
+            flag = this.flagManager.getFlag(claim.getID().toString(), this);
+            if (flag != null && !flag.getSet()) return null;
+
+            if (flag == null && claim.parent != null) {
+                flag = this.flagManager.getFlag(claim.parent.getID().toString(), this);
+                if (flag != null && !flag.getSet()) return null;
+            }
+        }
+
+        if (flag == null) {
+            flag = this.flagManager.getFlag("everywhere", this);
+            if (flag != null && !flag.getSet()) return null;
+        }
+
+        return flag;
+    }
+
     public void incrementInstances() {
         if (++this.instances == 1) {
             this.firstTimeSetup();

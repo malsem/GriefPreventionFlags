@@ -190,5 +190,14 @@ public enum Messages {
     RaidMemberOnlyDeny,
 
     EnabledProtectNamedMobs,
-    DisabledProtectNamedMobs
+    DisabledProtectNamedMobs,
+
+    // Custom flag
+    AddedJoinLocation,
+    RemovedJoinLocation,
+    JoinTeleport,
+
+    EnabledNoInvisible,
+    DisabledNoInvisible,
+    NoInvisible
 }

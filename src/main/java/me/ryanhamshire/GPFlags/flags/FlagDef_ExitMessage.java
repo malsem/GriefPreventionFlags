@@ -23,16 +23,16 @@ public class FlagDef_ExitMessage extends PlayerMovementFlagDefinition {
 
     @Override
     public boolean allowMovement(Player player, Location lastLocation, Location to, Claim claimFrom, Claim claimTo) {
-        if (lastLocation == null) return true;
+        if (claimFrom == null || lastLocation == null) return true;
         Flag flag = this.getFlagInstanceAtLocation(lastLocation, player);
-        if (flag == null) return true;
+        if(flag == null || (claimTo != null && claimFrom.getOwnerName().equals(claimTo.getOwnerName())) || player.hasPermission("gpflags.ignore")) return true;
 
         // get specific ExitMessage flag of origin claim and EnterMessage flag of destination claim
         Flag flagFrom = plugin.getFlagManager().getFlag(claimFrom, this);
         Flag flagToEnter = plugin.getFlagManager().getFlag(claimTo, plugin.getFlagManager().getFlagDefinitionByName("EnterMessage"));
 
         // Don't repeat the exit message of a claim in certain cases
-        if (claimFrom != null && claimTo != null) {
+        if (claimTo != null) {
             // moving to parent claim, and the sub claim does not have its own exit message
             if (claimFrom.parent == claimTo && (flagFrom == null || !flagFrom.getSet())) {
                 return true;
@@ -44,10 +44,7 @@ public class FlagDef_ExitMessage extends PlayerMovementFlagDefinition {
         }
 
         String message = flag.parameters;
-        if (claimFrom != null) {
-            message = message.replace("%owner%", claimFrom.getOwnerName()).replace("%name%", player.getName());
-        }
-
+        message = message.replace("%owner%", claimFrom.getOwnerName()).replace("%name%", player.getName());
         Util.sendClaimMessage(player, TextMode.Info, prefix + message);
 
         return true;

@@ -15,6 +15,7 @@ import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import me.ryanhamshire.GriefPrevention.PlayerData;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -85,7 +86,7 @@ class SetClaimFlagCmd extends BaseCmd {
                         return true;
                     }
                 }
-                if (flagName.equalsIgnoreCase("OwnerMemberFly")) {
+                else if (flagName.equalsIgnoreCase("OwnerMemberFly")) {
                     if (flag.getFlagDefinition().getName().equalsIgnoreCase("OwnerFly")) {
                         Util.sendMessage(player, TextMode.Warn, Messages.NoOwnerFlag);
                         return true;
@@ -101,8 +102,13 @@ class SetClaimFlagCmd extends BaseCmd {
                 if (!flagD.changeBiome(sender, claim, biome)) return true;
             }
 
+            else if (flagName.equalsIgnoreCase("JoinLocation")) {
+                Location l = player.getLocation();
+                params = new String[]{l.getBlockX() + ";" + l.getBlockY() + ";" + l.getBlockZ()};
+            }
+
             // Permissions for mob type
-            if (flagName.equalsIgnoreCase("NoMobSpawnsType")) {
+            else if (flagName.equalsIgnoreCase("NoMobSpawnsType")) {
                 if (!player.hasPermission("gpflags.flag.nomobspawnstype.*") && !player.hasPermission("gpflags.nomobspawnstype.*") && !player.hasPermission("gpflags.admin.*")) {
                     if (params.length == 0) return false;
                     for (String type : params[0].split(";")) {
@@ -135,7 +141,7 @@ class SetClaimFlagCmd extends BaseCmd {
                     }
                 }
             }
-            if (args[0].equalsIgnoreCase("NoEnterPlayer") && args.length >= 2) {
+            else if (args[0].equalsIgnoreCase("NoEnterPlayer") && args.length >= 2) {
                 for (int i = 1; i < args.length; i++) {
                     Player target = Bukkit.getPlayer(args[i]);
                     if (target != null && target.getName().equalsIgnoreCase(args[i])) {
@@ -147,10 +153,10 @@ class SetClaimFlagCmd extends BaseCmd {
                     }
                 }
             }
-            if (args[0].equalsIgnoreCase("OwnerFly")) {
+            else if (args[0].equalsIgnoreCase("OwnerFly")) {
                 player.setAllowFlight(true);
             }
-            if (args[0].equalsIgnoreCase("OwnerMemberFly")) {
+            else if (args[0].equalsIgnoreCase("OwnerMemberFly")) {
                 player.setAllowFlight(true);
                 World world = player.getWorld();
                 for (Player p : world.getPlayers()) {

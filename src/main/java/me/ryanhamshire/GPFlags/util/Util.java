@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("WeakerAccess")
 public class Util {
 
-    private static final String PREFIX = "&7[&bGP&3Flags&7] &r";
+    private static final String PREFIX = "&6";
     private static final Pattern HEX_PATTERN = Pattern.compile("<#([A-Fa-f0-9]){6}>");
 
     /**

@@ -282,13 +282,20 @@ public class FlagsDataStore {
         this.addDefault(defaults, Messages.EnableNoElytra, "Players will no longer be able to glide in this area", null);
         this.addDefault(defaults, Messages.DisableNoElytra, "Players will now be able to glide in this area", null);
 
+        this.addDefault(defaults, Messages.JoinTeleport, "領地權限 §7> §6傳送到此領地設定的初始位置", null);
+        this.addDefault(defaults, Messages.AddedJoinLocation, "領地權限 §7> §a成功設置領地初始位置 在領地範圍內登入的玩家將被傳送到此位置 擁有建築權限則不受影響", null);
+        this.addDefault(defaults, Messages.RemovedJoinLocation, "領地權限 §7> §c移除了領地初始位置", null);
+
+        this.addDefault(defaults, Messages.EnabledNoInvisible, "領地權限 §7> §a禁止玩家在領地內隱形 擁有建築權限則不受影響", null);
+        this.addDefault(defaults, Messages.DisabledNoInvisible, "領地權限 §7> §c允許玩家在領地內隱形", null);
+        this.addDefault(defaults, Messages.NoInvisible, "領地權限 §7> §c本領地禁止隱形 你的隱形效果被移除了", null);
+
         //load the config file
         FileConfiguration config = YamlConfiguration.loadConfiguration(new File(messagesFilePath));
 
         //for each message ID
-        for (int i = 0; i < messageIDs.length; i++) {
+        for (Messages messageID : messageIDs) {
             //get default for this message
-            Messages messageID = messageIDs[i];
             CustomizableMessage messageData = defaults.get(messageID.name());
 
             //if default is missing, log an error and use some fake data for now so that the plugin can run

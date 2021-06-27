@@ -11,6 +11,7 @@ import me.ryanhamshire.GriefPrevention.PlayerData;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.command.Command;
@@ -19,17 +20,32 @@ import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permissible;
 import org.bukkit.util.StringUtil;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+import java.util.logging.Level;
 
 public class CommandHandler {
 
     private final GPFlags plugin;
+    public final HashMap<FlagDefinition, String> name = new HashMap<>();
 
     public CommandHandler(GPFlags plugin) {
         this.plugin = plugin;
+        name.put(plugin.getFlagManager().getFlagDefinitionByName("NoEnter"), "禁止非成員玩家進入領地");
+        name.put(plugin.getFlagManager().getFlagDefinitionByName("NoFluidFlow"), "防止液體流動");
+        name.put(plugin.getFlagManager().getFlagDefinitionByName("NoItemDrop"), "防止丟棄物品");
+        name.put(plugin.getFlagManager().getFlagDefinitionByName("NoItemPickup"), "防止撿起物品");
+        name.put(plugin.getFlagManager().getFlagDefinitionByName("NoLeafDecay"), "防止葉子自然消失");
+        name.put(plugin.getFlagManager().getFlagDefinitionByName("NoMobSpawns"), "防止生物生成");
+        name.put(plugin.getFlagManager().getFlagDefinitionByName("NoEnderPearl"), "防止玩家使用終界珍珠傳送");
+        name.put(plugin.getFlagManager().getFlagDefinitionByName("OwnerMemberFly"), "領地成員飛行");
+        name.put(plugin.getFlagManager().getFlagDefinitionByName("NoMonsterSpawns"), "防止怪物生成");
+        name.put(plugin.getFlagManager().getFlagDefinitionByName("RaidMemberOnly"), "突襲只能由領地成員觸發");
+        name.put(plugin.getFlagManager().getFlagDefinitionByName("NoOpenDoors"), "防止玩家開關木門、地板門、柵欄門");
+        name.put(plugin.getFlagManager().getFlagDefinitionByName("ProtectNamedMobs"), "保護已命名生物");
+        name.put(plugin.getFlagManager().getFlagDefinitionByName("NoGrowth"), "防止作物生長");
+        name.put(plugin.getFlagManager().getFlagDefinitionByName("NoSnowForm"), "防止積雪產生");
+        name.put(plugin.getFlagManager().getFlagDefinitionByName("JoinLocation"), "領地初始位置");
+        name.put(plugin.getFlagManager().getFlagDefinitionByName("NoInvisible"), "禁止隱形效果");
     }
 
     private boolean playerHasPermissionForFlag(FlagDefinition flagDef, Permissible player) {
@@ -359,53 +375,26 @@ public class CommandHandler {
             boolean flagsFound = false;
             StringBuilder builder1 = new StringBuilder();
             StringBuilder builder2 = new StringBuilder();
-            StringBuilder builder3 = new StringBuilder();
             if (claim != null) {
                 flags = plugin.getFlagManager().getFlags(claim.getID().toString());
                 for (Flag flag : flags) {
                     flagsFound = true;
-                    builder1.append((flag.getSet() ? "+" : "-") + flag.flagDefinition.getName()).append(" ");
+                    builder1.append((flag.getSet() ? "+" : "-") + name.getOrDefault(flag.getFlagDefinition(), flag.getFlagDefinition().getName())).append(" ");
                 }
 
                 if (claim.parent != null) {
                     flags = plugin.getFlagManager().getFlags(claim.parent.getID().toString());
                     for (Flag flag : flags) {
                         flagsFound = true;
-                        builder2.append((flag.getSet() ? "+" : "-") + flag.flagDefinition.getName()).append(" ");
+                        builder2.append((flag.getSet() ? "+" : "-") + name.getOrDefault(flag.getFlagDefinition(), flag.getFlagDefinition().getName())).append(" ");
                     }
                 }
-
-                flags = plugin.getFlagManager().getFlags(FlagManager.DEFAULT_FLAG_ID);
-                for (Flag flag2 : flags) {
-                    flagsFound = true;
-                    builder3.append((flag2.getSet() ? "+" : "-") + flag2.flagDefinition.getName()).append(" ");
-                }
-            }
-
-            StringBuilder builder4 = new StringBuilder();
-            flags = plugin.getFlagManager().getFlags(player.getWorld().getName());
-            for (Flag flag3 : flags) {
-                flagsFound = true;
-                builder4.append((flag3.getSet() ? "+" : "-") + flag3.flagDefinition.getName()).append(" ");
-            }
-
-            StringBuilder builder5 = new StringBuilder();
-            flags = plugin.getFlagManager().getFlags("everywhere");
-            for (Flag flag4 : flags) {
-                flagsFound = true;
-                builder5.append((flag4.getSet() ? "+" : "-") + flag4.flagDefinition.getName()).append(" ");
             }
 
             if (builder1.length() > 0)
                 Util.sendMessage(player, TextMode.Info, Messages.FlagsClaim, builder1.toString());
             if (builder2.length() > 0)
                 Util.sendMessage(player, TextMode.Info, Messages.FlagsParent, builder2.toString());
-            if (builder3.length() > 0)
-                Util.sendMessage(player, TextMode.Info, Messages.FlagsDefault, builder3.toString());
-            if (builder4.length() > 0)
-                Util.sendMessage(player, TextMode.Info, Messages.FlagsWorld, builder4.toString());
-            if (builder5.length() > 0)
-                Util.sendMessage(player, TextMode.Info, Messages.FlagsServer, builder5.toString());
 
             if (!flagsFound) {
                 Util.sendMessage(player, TextMode.Info, Messages.NoFlagsHere);
@@ -454,9 +443,7 @@ public class CommandHandler {
             }
 
             String[] params = new String[args.length - 1];
-            for (int i = 1; i < args.length; i++) {
-                params[i - 1] = args[i];
-            }
+            System.arraycopy(args, 1, params, 0, args.length - 1);
 
             // stop owner/ownermember fly flags from joining
             Collection<Flag> flags;
@@ -468,7 +455,7 @@ public class CommandHandler {
                         return true;
                     }
                 }
-                if (args[0].equalsIgnoreCase("OwnerMemberFly")) {
+                else if (args[0].equalsIgnoreCase("OwnerMemberFly")) {
                     if (flag.flagDefinition.getName().equalsIgnoreCase("OwnerFly")) {
                         Util.sendMessage(player, TextMode.Warn, Messages.NoOwnerFlag);
                         return true;
@@ -484,8 +471,14 @@ public class CommandHandler {
                 if (!flagD.changeBiome(sender, claim, biome)) return true;
             }
 
+            else if (flagName.equalsIgnoreCase("JoinLocation")) {
+                GPFlags.getInstance().getLogger().log(Level.INFO, "www");
+                Location l = player.getLocation();
+                params = new String[]{l.getBlockX() + ";" + l.getBlockY() + ";" + l.getBlockZ()};
+            }
+
             // Permissions for mob type
-            if (flagName.equalsIgnoreCase("NoMobSpawnsType")) {
+            else if (flagName.equalsIgnoreCase("NoMobSpawnsType")) {
                 if (!player.hasPermission("gpflags.nomobspawnstype.*") && !player.hasPermission("gpflags.admin.*")) {
                     if (params == null) return false;
                     for (String type : params[0].split(";")) {
@@ -543,7 +536,7 @@ public class CommandHandler {
                     }
                 }
             }
-            if (args[0].equalsIgnoreCase("NoEnterPlayer") && args.length >= 2) {
+            else if (args[0].equalsIgnoreCase("NoEnterPlayer") && args.length >= 2) {
                 for (int i = 1; i < args.length; i++) {
                     Player target = Bukkit.getPlayer(args[i]);
                     if (target != null && target.getName().equalsIgnoreCase(args[i])) {
@@ -555,10 +548,10 @@ public class CommandHandler {
                     }
                 }
             }
-            if (args[0].equalsIgnoreCase("OwnerFly")) {
+            else if (args[0].equalsIgnoreCase("OwnerFly")) {
                 player.setAllowFlight(true);
             }
-            if (args[0].equalsIgnoreCase("OwnerMemberFly")) {
+            else if (args[0].equalsIgnoreCase("OwnerMemberFly")) {
                 player.setAllowFlight(true);
                 World world = player.getWorld();
                 for (Player p: world.getPlayers()) {

@@ -26,16 +26,16 @@ public class FlagDef_EnterMessage extends PlayerMovementFlagDefinition {
 
     @Override
     public boolean allowMovement(Player player, Location lastLocation, Location to, Claim claimFrom, Claim claimTo) {
-        if (lastLocation == null) return true;
+        if (claimTo == null || lastLocation == null) return true;
         Flag flag = this.getFlagInstanceAtLocation(to, player);
-        if (flag == null) return true;
+        if(flag == null || (claimFrom != null && claimFrom.getOwnerName().equals(claimTo.getOwnerName())) || player.hasPermission("gpflags.ignore")) return true;
 
         // get specific EnterMessage flag of destination claim and ExitMessage flag of origin claim
         Flag flagTo = plugin.getFlagManager().getFlag(claimTo, this);
         Flag flagFromExit = plugin.getFlagManager().getFlag(claimFrom, plugin.getFlagManager().getFlagDefinitionByName("ExitMessage"));
 
         // Don't repeat the enter message of a claim in certain cases
-        if (claimFrom != null && claimTo != null) {
+        if (claimFrom != null) {
             // moving to sub-claim, and the sub claim does not have its own enter message
             if (claimTo.parent == claimFrom && (flagTo == null || !flagTo.getSet())) {
                 return true;
@@ -47,11 +47,9 @@ public class FlagDef_EnterMessage extends PlayerMovementFlagDefinition {
         }
 
         String message = flag.parameters;
-        if (claimTo != null) {
-            message = message.replace("%owner%", claimTo.getOwnerName()).replace("%name%", player.getName());
-        }
-
+        message = message.replace("%owner%", claimTo.getOwnerName()).replace("%name%", player.getName());
         Util.sendClaimMessage(player, TextMode.Info, prefix + message);
+
         return true;
     }
 
@@ -61,6 +59,7 @@ public class FlagDef_EnterMessage extends PlayerMovementFlagDefinition {
         Flag flag = this.getFlagInstanceAtLocation(player.getLocation(), player);
         if (flag == null) return;
         Claim claim = GriefPrevention.instance.dataStore.getClaimAt(player.getLocation(), true, null);
+        if(claim == null) return;
         String message = flag.parameters;
         message = message.replace("%owner%", claim.getOwnerName()).replace("%name%", player.getName());
         Util.sendClaimMessage(player, TextMode.Info, prefix + message);
