@@ -30,22 +30,22 @@ public class CommandHandler {
 
     public CommandHandler(GPFlags plugin) {
         this.plugin = plugin;
-        name.put(plugin.getFlagManager().getFlagDefinitionByName("NoEnter"), "禁止非成員玩家進入領地");
-        name.put(plugin.getFlagManager().getFlagDefinitionByName("NoFluidFlow"), "防止液體流動");
-        name.put(plugin.getFlagManager().getFlagDefinitionByName("NoItemDrop"), "防止丟棄物品");
-        name.put(plugin.getFlagManager().getFlagDefinitionByName("NoItemPickup"), "防止撿起物品");
-        name.put(plugin.getFlagManager().getFlagDefinitionByName("NoLeafDecay"), "防止葉子自然消失");
-        name.put(plugin.getFlagManager().getFlagDefinitionByName("NoMobSpawns"), "防止生物生成");
-        name.put(plugin.getFlagManager().getFlagDefinitionByName("NoEnderPearl"), "防止玩家使用終界珍珠傳送");
-        name.put(plugin.getFlagManager().getFlagDefinitionByName("OwnerMemberFly"), "領地成員飛行");
-        name.put(plugin.getFlagManager().getFlagDefinitionByName("NoMonsterSpawns"), "防止怪物生成");
-        name.put(plugin.getFlagManager().getFlagDefinitionByName("RaidMemberOnly"), "突襲只能由領地成員觸發");
-        name.put(plugin.getFlagManager().getFlagDefinitionByName("NoOpenDoors"), "防止玩家開關木門、地板門、柵欄門");
-        name.put(plugin.getFlagManager().getFlagDefinitionByName("ProtectNamedMobs"), "保護已命名生物");
-        name.put(plugin.getFlagManager().getFlagDefinitionByName("NoGrowth"), "防止作物生長");
-        name.put(plugin.getFlagManager().getFlagDefinitionByName("NoSnowForm"), "防止積雪產生");
-        name.put(plugin.getFlagManager().getFlagDefinitionByName("JoinLocation"), "領地初始位置");
-        name.put(plugin.getFlagManager().getFlagDefinitionByName("NoInvisible"), "禁止隱形效果");
+        name.put(plugin.getFlagManager().getFlagDefinitionByName("NoEnter"), "NoEnter");
+        name.put(plugin.getFlagManager().getFlagDefinitionByName("NoFluidFlow"), "NoFluidFlow");
+        name.put(plugin.getFlagManager().getFlagDefinitionByName("NoItemDrop"), "NoItemDrop");
+        name.put(plugin.getFlagManager().getFlagDefinitionByName("NoItemPickup"), "NoItemPickup");
+        name.put(plugin.getFlagManager().getFlagDefinitionByName("NoLeafDecay"), "NoLeafDecay");
+        name.put(plugin.getFlagManager().getFlagDefinitionByName("NoMobSpawns"), "NoMobSpawns");
+        name.put(plugin.getFlagManager().getFlagDefinitionByName("NoEnderPearl"), "NoEnderPearl");
+        name.put(plugin.getFlagManager().getFlagDefinitionByName("OwnerMemberFly"), "OwnerMemberFly");
+        name.put(plugin.getFlagManager().getFlagDefinitionByName("NoMonsterSpawns"), "NoMonsterSpawns");
+        name.put(plugin.getFlagManager().getFlagDefinitionByName("RaidMemberOnly"), "RaidMemberOnly");
+        name.put(plugin.getFlagManager().getFlagDefinitionByName("NoOpenDoors"), "NoOpenDoors);
+        name.put(plugin.getFlagManager().getFlagDefinitionByName("ProtectNamedMobs"), "ProtectNamedMobs");
+        name.put(plugin.getFlagManager().getFlagDefinitionByName("NoGrowth"), "NoGrowth");
+        name.put(plugin.getFlagManager().getFlagDefinitionByName("NoSnowForm"), "NoSnowForm");
+        name.put(plugin.getFlagManager().getFlagDefinitionByName("JoinLocation"), "JoinLocation");
+        name.put(plugin.getFlagManager().getFlagDefinitionByName("NoInvisible"), "NoInvisible");
     }
 
     private boolean playerHasPermissionForFlag(FlagDefinition flagDef, Permissible player) {
@@ -515,7 +515,7 @@ public class CommandHandler {
                         Claim cp = GriefPrevention.instance.dataStore.getClaimAt(p.getLocation(), true, null);
                         if(cp != null && cp == claim) {
                             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "cmi spawn "+id);
-                            GPFlags.sendMessage(p, TextMode.Err, "領地權限 > 所在領地將你驅逐 你被傳送到了重生點");
+                            GPFlags.sendMessage(p, TextMode.Err, "Territory authority > Your territory will expel you and you will be teleported to the spawn point");
                         }
                     }
                 }
