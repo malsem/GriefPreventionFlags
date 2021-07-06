@@ -40,7 +40,7 @@ public class CommandHandler {
         name.put(plugin.getFlagManager().getFlagDefinitionByName("OwnerMemberFly"), "OwnerMemberFly");
         name.put(plugin.getFlagManager().getFlagDefinitionByName("NoMonsterSpawns"), "NoMonsterSpawns");
         name.put(plugin.getFlagManager().getFlagDefinitionByName("RaidMemberOnly"), "RaidMemberOnly");
-        name.put(plugin.getFlagManager().getFlagDefinitionByName("NoOpenDoors"), "NoOpenDoors);
+        name.put(plugin.getFlagManager().getFlagDefinitionByName("NoOpenDoors"), "NoOpenDoors");
         name.put(plugin.getFlagManager().getFlagDefinitionByName("ProtectNamedMobs"), "ProtectNamedMobs");
         name.put(plugin.getFlagManager().getFlagDefinitionByName("NoGrowth"), "NoGrowth");
         name.put(plugin.getFlagManager().getFlagDefinitionByName("NoSnowForm"), "NoSnowForm");
