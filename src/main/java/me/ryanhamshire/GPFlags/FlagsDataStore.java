@@ -282,13 +282,13 @@ public class FlagsDataStore {
         this.addDefault(defaults, Messages.EnableNoElytra, "Players will no longer be able to glide in this area", null);
         this.addDefault(defaults, Messages.DisableNoElytra, "Players will now be able to glide in this area", null);
 
-        this.addDefault(defaults, Messages.JoinTeleport, "領地權限 §7> §6傳送到此領地設定的初始位置", null);
-        this.addDefault(defaults, Messages.AddedJoinLocation, "領地權限 §7> §a成功設置領地初始位置 在領地範圍內登入的玩家將被傳送到此位置 擁有建築權限則不受影響", null);
-        this.addDefault(defaults, Messages.RemovedJoinLocation, "領地權限 §7> §c移除了領地初始位置", null);
+        this.addDefault(defaults, Messages.JoinTeleport, "Territory authority §7> §6 Teleport to the initial position set in this territory", null);
+        this.addDefault(defaults, Messages.AddedJoinLocation, "Territory Permission §7> §a Successfully set the initial position of the territory. Players who log in within the territory will be teleported to this location. If they have building permission, they will not be affected.", null);
+        this.addDefault(defaults, Messages.RemovedJoinLocation, "Territory authority §7> §c Removed the initial position of the territory", null);
 
-        this.addDefault(defaults, Messages.EnabledNoInvisible, "領地權限 §7> §a禁止玩家在領地內隱形 擁有建築權限則不受影響", null);
-        this.addDefault(defaults, Messages.DisabledNoInvisible, "領地權限 §7> §c允許玩家在領地內隱形", null);
-        this.addDefault(defaults, Messages.NoInvisible, "領地權限 §7> §c本領地禁止隱形 你的隱形效果被移除了", null);
+        this.addDefault(defaults, Messages.EnabledNoInvisible, "Territory Permission §7> §a Players are prohibited from being invisible in the territory, and building permissions will not be affected", null);
+        this.addDefault(defaults, Messages.DisabledNoInvisible, "Territory authority §7> §c allows players to be invisible in the territory", null);
+        this.addDefault(defaults, Messages.NoInvisible, "Territory authority §7> §c This territory prohibits invisibility. Your invisibility effect has been removed", null);
 
         //load the config file
         FileConfiguration config = YamlConfiguration.loadConfiguration(new File(messagesFilePath));
